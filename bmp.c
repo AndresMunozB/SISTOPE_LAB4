@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 int main(){
-  char nombre[60] = "bmp.png";
+  char nombre[60] = "vicunas.bmp";
   FILE* fichero;
   int compresion, ancho, alto;
   char marca1, marca2;
