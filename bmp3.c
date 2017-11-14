@@ -22,25 +22,26 @@
 //********************************************************************************
 //DECLARACION DE ESTRUCTURAS
 //********************************************************************************
+
 //Estructura para almacenar la cabecera de la imagen BMP y un apuntador a la matriz de pixeles
 typedef struct BMP
 {
-	char bm[2];					//(2 Bytes) BM (Tipo de archivo)
-	int tamano;					//(4 Bytes) TamaÃ±o del archivo en bytes
-	int reservado;					//(4 Bytes) Reservado
-	int offset;						//(4 Bytes) offset, distancia en bytes entre la img y los pÃ­xeles
-	int tamanoMetadatos;			//(4 Bytes) TamaÃ±o de Metadatos (tamaÃ±o de esta estructura = 40)
-	int alto;						//(4 Bytes) Ancho (numero de pÃ­xeles horizontales)
-	int ancho;					//(4 Bytes) Alto (numero de pixeles verticales)
-	short int numeroPlanos;			//(2 Bytes) Numero de planos de color
-	short int profundidadColor;		//(2 Bytes) Profundidad de color (debe ser 24 para nuestro caso)
-	int tipoCompresion;				//(4 Bytes) Tipo de compresiÃ³n (Vale 0, ya que el bmp es descomprimido)
-	int tamanoEstructura;			//(4 Bytes) TamaÃ±o de la estructura Imagen (Paleta)
-	int pxmh;					//(4 Bytes) PÃ­xeles por metro horizontal
-	int pxmv;					//(4 Bytes) PÃ­xeles por metro vertical
-	int coloresUsados;				//(4 Bytes) Cantidad de colores usados 
-	int coloresImportantes;			//(4 Bytes) Cantidad de colores importantes
-	unsigned char **pixel; 			//Puntero a una tabla dinamica de caracteres de 2 dimenciones almacenara el valor del pixel en escala de gris (0-255)
+    char bm[2];                 //(2 Bytes) BM (Tipo de archivo)
+    int tamano;                 //(4 Bytes) TamaÃ±o del archivo en bytes
+    int reservado;                  //(4 Bytes) Reservado
+    int offset;                     //(4 Bytes) offset, distancia en bytes entre la img y los pÃ­xeles
+    int tamanoMetadatos;            //(4 Bytes) TamaÃ±o de Metadatos (tamaÃ±o de esta estructura = 40)
+    int alto;                       //(4 Bytes) Ancho (numero de pÃ­xeles horizontales)
+    int ancho;                  //(4 Bytes) Alto (numero de pixeles verticales)
+    short int numeroPlanos;         //(2 Bytes) Numero de planos de color
+    short int profundidadColor;     //(2 Bytes) Profundidad de color (debe ser 24 para nuestro caso)
+    int tipoCompresion;             //(4 Bytes) Tipo de compresiÃ³n (Vale 0, ya que el bmp es descomprimido)
+    int tamanoEstructura;           //(4 Bytes) TamaÃ±o de la estructura Imagen (Paleta)
+    int pxmh;                   //(4 Bytes) PÃ­xeles por metro horizontal
+    int pxmv;                   //(4 Bytes) PÃ­xeles por metro vertical
+    int coloresUsados;              //(4 Bytes) Cantidad de colores usados 
+    int coloresImportantes;         //(4 Bytes) Cantidad de colores importantes
+    unsigned char **pixel;          //Puntero a una tabla dinamica de caracteres de 2 dimenciones almacenara el valor del pixel en escala de gris (0-255)
 }BMP;
 
 //*****************************************************************
@@ -85,9 +86,10 @@ int main (int argc, char* argv[])
 	//*************************************************************
 	//Imprimir el valor de los pixeles
 	for (i=0;i<img.alto;i++)
-		for (j=0;j<img.ancho;j++)
-			img.pixel[i][j]=img.pixel[i][j]-10;
+		for (j=0;j<img.ancho;j++);
+			//img.pixel[i][j]=img.pixel[i][j]-10;
 			//printf("%u\t",img.pixel[i][j]);
+			//printf("hola\n");
 			
 		
 	//***************************************************************************************************************************
@@ -166,10 +168,12 @@ void abrir_imagen(BMP *imagen, char *ruta)
 			fread(&B,sizeof(char),1, archivo);  //Byte Blue del pixel
 			fread(&G,sizeof(char),1, archivo);  //Byte Green del pixel
 			fread(&R,sizeof(char),1, archivo);  //Byte Red del pixel
-			//ConversiÃ³n a escala de grises
+			//ConversiÃ³n a escala de 
+			printf("(%d,%d,%d) ",R,G,B);
 			//imagen->pixel[i][j]=(unsigned char)((R*0.3)+(G*0.59)+ (B*0.11)); 	//Formula correcta
 			imagen->pixel[i][j]=(B+G+R)/3;								//Forma simple (Promedio)
 		}   
+		printf("\n");
 	}
 	//Cerrrar el archivo
 	fclose(archivo);	
