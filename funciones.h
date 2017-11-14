@@ -45,5 +45,7 @@ void matriz_show(Matriz *matriz){
     }
 }
 
+void matriz_load()
+
 
 #endif
