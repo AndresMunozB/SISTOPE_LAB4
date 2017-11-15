@@ -2,9 +2,11 @@
 #define _FUNCIONES_H
 #include "estructuras.h"
 
-void abrir_imagen(BMP *imagen, char *ruta, int modo);
-void crear_imagen(BMP *imagen, char ruta[]);
 long int traductor(int i, int j, int ancho,int offset);
 void cargar_pixel(int i,int j,FILE* archivo,BMP* imagen);
+void cargar_matriz_fila(BMP* imagen,FILE* archivo);
+void cargar_matriz_columna(BMP* imagen, FILE* archivo);
+void abrir_imagen(BMP *imagen, char *ruta, int modo);
+void crear_imagen(BMP *imagen, char ruta[]);
 
 #endif

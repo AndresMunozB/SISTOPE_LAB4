@@ -55,20 +55,20 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
         if(i%2 == 0){
              j=0;
             while(j<imagen->alto){
-                printf("%d,%d ",j,i );
+                //printf("%d,%d ",j,i );
                 cargar_pixel(j,i,archivo,imagen);
                 j++;
             }
-            printf("\n");
+            //printf("\n");
         }
         else{
             j--;
             while(j>=0){
-                printf("%d,%d ",j,i );
+                //printf("%d,%d ",j,i );
                 cargar_pixel(j,i,archivo,imagen);
                 j--;
             }
-            printf("\n");
+            //printf("\n");
         }
         i++;
     }
@@ -131,7 +131,7 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo)
         //CARGAR POR FILA
         cargar_matriz_fila(imagen,archivo);
     }
-    else{
+    else if(modo == 0){
         //CARGAR POR COLUMNA
         cargar_matriz_columna(imagen,archivo);
     }
@@ -142,7 +142,21 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo)
     fclose(archivo);    
 }
 
+void destruir_imagen(BMP* imagen){
+    int i;
+    for (i=0;i<imagen->alto;i++){
+        free(imagen->pixel[i]);
+    }
+    free(imagen->pixel);
+    free(imagen);
+}
 
+void reducir_imagen_fila(BMP* imagen,int catidad_pixeles){
+
+}
+void reducir_imagen_columna(BMP* imagen,int catidad_pixeles){
+
+}
 
 void crear_imagen(BMP *imagen, char ruta[])
 {
