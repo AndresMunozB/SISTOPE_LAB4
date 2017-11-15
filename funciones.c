@@ -53,29 +53,76 @@ void abrir_imagen(BMP *imagen, char *ruta)
     for( i=0; i<imagen->alto; i++)
         imagen->pixel[i]=(Pixel*) malloc (imagen->ancho* sizeof(Pixel)); 
     
-    //Pasar la imÃ¡gen a el arreglo reservado en escala de grises
     //unsigned char R,B,G;
-    for (i=0;i<imagen->alto;i++)
-    {
-        for (j=0;j<imagen->ancho;j++)
-        {  
-            printf("ftell:%li\n",ftell(archivo) );
-            printf("traductor: %li\n",traductor(i,j,imagen->ancho,imagen->alto,imagen->offset));
-            fread(&imagen->pixel[i][j].B,sizeof(char),1, archivo);  //Byte Blue del pixel
-            fread(&imagen->pixel[i][j].G,sizeof(char),1, archivo);  //Byte Green del pixel
-            fread(&imagen->pixel[i][j].R,sizeof(char),1, archivo);  //Byte Red del pixel
-            //printf("offset: %d\n",imagen->offset );
-            //printf("%d,%c ", R);
-            //ConversiÃ³n a escala de grises
-            //imagen->pixel[i][j]=(unsigned char)((R*0.3)+(G*0.59)+ (B*0.11));  //Formula correcta
-            //imagen->pixel[i][j]=(B+G+R)/3;                              //Forma simple (Promedio)
-        }   
+
+    //CARGAR POR FILA
+    /*i=0;
+    j=0;
+    while(i<imagen->alto){
+       
+        
+        if(i%2 == 0){
+             j=0;
+            while(j<imagen->ancho){
+                printf("%d,%d ",i,j );
+                cargar_pixel(i,j,archivo,imagen);
+                j++;
+            }
+            printf("\n");
+        }
+        else{
+            j--;
+            while(j>=0){
+                printf("%d,%d ",i,j );
+                cargar_pixel(i,j,archivo,imagen);
+                j--;
+            }
+            printf("\n");
+        }
+        i++;
+    }*/
+
+    //CARGAR POR COLUMNA
+    i=0;
+    j=0;
+    while(i<imagen->ancho){
+       
+        
+        if(i%2 == 0){
+             j=0;
+            while(j<imagen->alto){
+                printf("%d,%d ",j,i );
+                cargar_pixel(j,i,archivo,imagen);
+                j++;
+            }
+            printf("\n");
+        }
+        else{
+            j--;
+            while(j>=0){
+                printf("%d,%d ",j,i );
+                cargar_pixel(j,i,archivo,imagen);
+                j--;
+            }
+            printf("\n");
+        }
+        i++;
     }
+    
     //Cerrrar el archivo
     fclose(archivo);    
 }
 
-long int traductor(int i, int j, int ancho, int alto,int offset){
+void cargar_pixel(int i,int j,FILE* archivo,BMP* imagen){
+    long int posicion = traductor(i,j,imagen->ancho,imagen->offset);
+    fseek(archivo,posicion,SEEK_SET);
+    fread(&imagen->pixel[i][j].B,sizeof(char),1, archivo);  //Byte Blue del pixel
+    fread(&imagen->pixel[i][j].G,sizeof(char),1, archivo);  //Byte Green del pixel
+    fread(&imagen->pixel[i][j].R,sizeof(char),1, archivo);  //Byte Red del pixel
+
+}
+
+long int traductor(int i, int j, int ancho,int offset){
     long int pixel_offset = sizeof(char) * 3;
     long int result = (pixel_offset*((i*ancho)+j)) + offset;
     return result;
