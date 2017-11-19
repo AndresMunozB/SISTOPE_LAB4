@@ -14,9 +14,7 @@ void cargar_pixel(int i,int j,FILE* archivo,BMP* imagen){
     fread(&imagen->pixel[i][j].B,sizeof(char),1, archivo);  //Byte Blue del pixel
     fread(&imagen->pixel[i][j].G,sizeof(char),1, archivo);  //Byte Green del pixel
     fread(&imagen->pixel[i][j].R,sizeof(char),1, archivo);  //Byte Red del pixel
-
 }
-
 
 void cargar_matriz_fila(BMP* imagen,FILE* archivo){
     int i=0;
@@ -74,10 +72,7 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     }
 }
 
-
-
-void abrir_imagen(BMP *imagen, char *ruta, int modo)
-{
+void abrir_imagen(BMP *imagen, char *ruta, int modo){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
     //int i,j;
     
@@ -151,15 +146,7 @@ void destruir_imagen(BMP* imagen){
     free(imagen);
 }
 
-void reducir_imagen_fila(BMP* imagen,int catidad_pixeles){
-
-}
-void reducir_imagen_columna(BMP* imagen,int catidad_pixeles){
-
-}
-
-void crear_imagen(BMP *imagen, char ruta[])
-{
+void crear_imagen(BMP *imagen, char ruta[]){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
 
     int i,j;
@@ -204,4 +191,136 @@ void crear_imagen(BMP *imagen, char ruta[])
     }
     //Cerrrar el archivo
     fclose(archivo);
+}
+
+void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
+   // int alreves = 0;
+    int i=0,j=0;
+    int avgB, avgG, avgR; //Promedio de R,G,B
+    int sumB=0, sumG=0, sumR=0; 
+    int m = cantidad_pixeles;
+    int filaNueva = 0;
+    int contadorAvg = 0;
+
+    while(i < imagen->alto){
+        while(filaNueva < imagenNueva->ancho){
+            while(j < imagen->ancho){
+                if(m == 0){
+                    break;
+                }else{
+                    sumB = sumB  + imagen->pixel[i][j].B;
+                    sumR = sumR  + imagen->pixel[i][j].R;
+                    sumG = sumG  + imagen->pixel[i][j].G;
+
+                    contadorAvg++;
+                    m--;
+                    j++;
+                }
+            }
+            m = cantidad_pixeles;
+
+            avgG = (sumG/contadorAvg);
+            avgR = (sumR/contadorAvg);
+            avgB = (sumB/contadorAvg);
+
+            imagenNueva->pixel[i][filaNueva].B = avgB;
+            imagenNueva->pixel[i][filaNueva].G = avgG;
+            imagenNueva->pixel[i][filaNueva].R = avgR;
+            sumB = 0;
+            sumR = 0;
+            sumG = 0;
+            filaNueva++;
+            contadorAvg = 0;
+        }
+        j=0; 
+        filaNueva = 0;        
+        i++;  //cambio de fila
+    }
+
+}
+
+void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles){
+}
+
+//Renombrar funcion
+BMP* funcion(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
+    //Recalcular largo o ancho y llamar a la función n veces de reducir fila o columna
+    int i; 
+    BMP* imagenReducida = (BMP*)malloc(sizeof(BMP));
+    imagenReducida->bm[0] = imagen->bm[0];
+    imagenReducida->bm[1] = imagen->bm[1];
+    imagenReducida->bm[2] = '\0';
+    imagenReducida->tamano = imagen->tamano;
+    imagenReducida->reservado = imagen->reservado;
+    imagenReducida->offset = imagen->offset;
+    imagenReducida->tamanoMetadatos = imagen->tamanoMetadatos;
+    imagenReducida->alto = imagen->alto;
+    imagenReducida->numeroPlanos = imagen->numeroPlanos;
+    imagenReducida->profundidadColor = imagen->profundidadColor;
+    imagenReducida->tipoCompresion = imagen->tipoCompresion;
+    imagenReducida->tamanoEstructura = imagen->tamanoEstructura;
+    imagenReducida->pxmh = imagen->pxmh;
+    imagenReducida->pxmv = imagen->pxmv;
+    imagenReducida->coloresUsados = imagen->coloresUsados;
+    imagenReducida->coloresImportantes = imagen->coloresImportantes;
+    if(imagen->ancho%cantidad_pixeles == 0){
+        imagenReducida->ancho = imagen->ancho/cantidad_pixeles;
+    }else{
+        imagenReducida->ancho = (imagen->ancho/cantidad_pixeles) + 1;
+    }
+    imagenReducida->pixel=(Pixel**) malloc (imagenReducida->alto* sizeof(Pixel*)); 
+    for(i = 0; i < imagenReducida->alto; i++){
+        imagenReducida->pixel[i] = (Pixel*)malloc(sizeof(Pixel)*imagenReducida->ancho);
+    }
+
+    //primer parametro -> siempre imagen original
+    //método 1 -> fila
+    //método 2 -> columnas
+    //método 3 -> ambas
+    if(modo == 1 || modo == 3){
+        for(i = 0; i < iteraciones; i++){
+            reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
+        }
+    }
+
+   /* if(modo == 2 || modo == 3){
+        for(i = 0; i < iteraciones; i++){
+            reducir_imagen_columna();
+        }
+    }*/
+    
+
+    print_imagen(imagen);
+    printf("--------------------------------------------------\n");
+    print_imagen(imagenReducida);
+    return imagenReducida;
+}
+
+void print_imagen(BMP *imagen){
+    printf("Bm %s%s\n",&imagen->bm[0],&imagen->bm[1]);
+    printf("Tamano %d\n",imagen->tamano);
+    printf("reservado %d\n",imagen->reservado);
+    printf("offset %d\n",imagen->offset);
+    printf("Tamano Metadatos %d\n",imagen->tamanoMetadatos);
+    printf("Alto %d\n",imagen->alto);
+    printf("Ancho %d\n",imagen->ancho);
+    printf("Numero Planos %d\n",imagen->numeroPlanos);
+    printf("Profundidad Color %d\n",imagen->profundidadColor);
+    printf("Tipo compresion %d\n",imagen->tipoCompresion);
+    printf("Tamano Estructua %d\n",imagen->tamanoEstructura);
+    printf("pxmh %d\n",imagen->pxmh);
+    printf("pxmv %d\n",imagen->pxmv);
+    printf("Colores Usados %d\n",imagen->coloresUsados);
+    printf("Colores Importantes %d\n",imagen->coloresImportantes);
+
+    printf("PIXEL:\n");
+    for(int i = 0; i < imagen->alto; i++){
+        printf("%d - ", i+1);
+        for(int j = 0; j < imagen->ancho; j++){
+            printf("(%d,",imagen->pixel[i][j].R);
+            printf("%d,",imagen->pixel[i][j].G);
+            printf("%d) ",imagen->pixel[i][j].B);
+        }
+        printf("\n");
+    }
 }
