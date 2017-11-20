@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <time.h>
 #include "funciones.h"
 
 
@@ -23,7 +24,10 @@ int main(int argc,char** argv){
 	//int i,j; 				//Variables auxiliares para loops
 	BMP img;				//Estructura de tipo imÃ¡gen
 	char IMAGEN[45];		//AlmacenarÃ¡ la ruta de la imagen
-	
+
+	time_t startTime, endTime;
+	unsigned int seconds;
+	startTime = time(NULL);
 
 	//******************************************************************	
 	//Si no se introdujo la ruta de la imagen BMP 
@@ -46,6 +50,7 @@ int main(int argc,char** argv){
 	printf("\nIMAGEN: %s",IMAGEN);
 	printf("\n*************************************************************************");
 	printf("\nDimensiones de la imÃ¡gen:\tAlto=%d\tAncho=%d\n",img.alto,img.ancho);
+
 	reduce_imagen(&img,ovalue,mvalue,nvalue);
 	//*************************************************************
 	//1 Tratamiento de los pixeles
@@ -57,7 +62,10 @@ int main(int argc,char** argv){
 			//printf("%u\t",img.pixel[i][j]);
 			//printf("hola\n");
 			
-		
+	endTime = time(NULL);
+	seconds = endTime - startTime;
+	printf("Elapsed time (s): %d\n", seconds);
+	
 	//***************************************************************************************************************************
 	//2 Crear la imÃ¡gen BMP a partir del arreglo img.pixel[][]
 	//***************************************************************************************************************************	
@@ -65,5 +73,5 @@ int main(int argc,char** argv){
 	printf("\nImÃ¡gen BMP tratada en el archivo: %s\n",IMAGEN_TRATADA);
 	
 	//Terminar programa normalmente	
-	exit (0);	
+	exit (0);
 }
