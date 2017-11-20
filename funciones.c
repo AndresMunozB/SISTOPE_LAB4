@@ -305,9 +305,6 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                     sumPixel[i][0] = sumPixel[i][0] + imagen->pixel[i][j].R;
                     sumPixel[i][1] = sumPixel[i][1] + imagen->pixel[i][j].G;
                     sumPixel[i][2] = sumPixel[i][2] + imagen->pixel[i][j].B;
-                    /*if(i == 0 || i == 1 || i == 2){
-                        printf("i: %d y j: %d y sumPixelSuma: %d\n", i,j,sumPixel[i][0]);
-                    }*/
                     i++;
                 }
                 m++;
@@ -334,11 +331,12 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     } 
 }
 
-//Renombrar funcion y borrar el retorno
-BMP* funcion(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
-    //Recalcular largo o ancho y llamar a la función n veces de reducir fila o columna
+void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
     int i; 
-    BMP* imagenReducida = (BMP*)malloc(sizeof(BMP));
+    BMP* imagenReducida;
+    BMP* imagenRedCol;
+   
+    imagenReducida = (BMP*)malloc(sizeof(BMP));
     imagenReducida->bm[0] = imagen->bm[0];
     imagenReducida->bm[1] = imagen->bm[1];
     imagenReducida->bm[2] = '\0';
@@ -369,23 +367,54 @@ BMP* funcion(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
     //método 1 -> fila
     //método 2 -> columnas
     //método 3 -> ambas
-   /*if(modo == 1 || modo == 3){
+    if(modo == 1){
         for(i = 0; i < iteraciones; i++){
             reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
         }
-    }*/
-
-    if(modo == 2 || modo == 3){
+    }else if(modo == 2){
         for(i = 0; i < iteraciones; i++){
             reducir_imagen_columna(imagen,cantidad_pixeles,imagenReducida);
         }
+    }else{
+        for(i = 0; i < iteraciones; i++){
+            reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
+        }
+        imagenRedCol = (BMP*)malloc(sizeof(BMP));
+        imagenRedCol->bm[0] = imagen->bm[0];
+        imagenRedCol->bm[1] = imagen->bm[1];
+        imagenRedCol->bm[2] = '\0';
+        imagenRedCol->tamano = imagen->tamano;
+        imagenRedCol->reservado = imagen->reservado;
+        imagenRedCol->offset = imagen->offset;
+        imagenRedCol->tamanoMetadatos = imagen->tamanoMetadatos;
+        imagenRedCol->alto = imagen->alto;
+        imagenRedCol->numeroPlanos = imagen->numeroPlanos;
+        imagenRedCol->profundidadColor = imagen->profundidadColor;
+        imagenRedCol->tipoCompresion = imagen->tipoCompresion;
+        imagenRedCol->tamanoEstructura = imagen->tamanoEstructura;
+        imagenRedCol->pxmh = imagen->pxmh;
+        imagenRedCol->pxmv = imagen->pxmv;
+        imagenRedCol->coloresUsados = imagen->coloresUsados;
+        imagenRedCol->coloresImportantes = imagen->coloresImportantes;
+        if(imagen->ancho%cantidad_pixeles == 0){
+            imagenRedCol->ancho = imagen->ancho/cantidad_pixeles;
+        }else{
+            imagenRedCol->ancho = (imagen->ancho/cantidad_pixeles) + 1;
+        }
+        imagenRedCol->pixel=(Pixel**) malloc (imagenRedCol->alto* sizeof(Pixel*)); 
+        for(i = 0; i < imagenRedCol->alto; i++){
+            imagenRedCol->pixel[i] = (Pixel*)malloc(sizeof(Pixel)*imagenRedCol->ancho);
+        }
+        for(i = 0; i < iteraciones; i++){
+            reducir_imagen_columna(imagen,cantidad_pixeles,imagenRedCol);
+        }
     }
-    
 
-    print_imagen(imagen);
-    printf("--------------------------------------------------\n");
+   // print_imagen(imagen);
     print_imagen(imagenReducida);
-    return imagenReducida;
+    printf("--------------------------------------------------\n");
+    if(modo == 3)
+        print_imagen(imagenRedCol);
 }
 
 void print_imagen(BMP *imagen){

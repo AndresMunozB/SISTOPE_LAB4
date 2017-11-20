@@ -33,7 +33,7 @@ int main(int argc,char** argv){
 	printf("\nIMAGEN: %s",IMAGEN);
 	printf("\n*************************************************************************");
 	printf("\nDimensiones de la imÃ¡gen:\tAlto=%d\tAncho=%d\n",img.alto,img.ancho);
-	funcion(&img,2,20,1);
+	reduce_imagen(&img,3,20,30);
 	//*************************************************************
 	//1 Tratamiento de los pixeles
 	//*************************************************************
