@@ -211,8 +211,6 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                     if(m == 0){
                         break;
                     }else{
-                       // printf("SUMB: %d SUMR: %d SUMG: %d\n",sumB,sumR,sumG);
-                        //printf("1 - I: %d J: %d\n",i,j);
                         sumB = sumB  + imagen->pixel[i][j].B;
                         sumR = sumR  + imagen->pixel[i][j].R;
                         sumG = sumG  + imagen->pixel[i][j].G;
@@ -255,29 +253,15 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                         sumG = sumG  + imagen->pixel[i][j].G;
 
                         contadorAvg++;
-                      //  printf("i: %d, j: %d, contadorAvg: %d\n",i,j,contadorAvg);
                         m--;
                         j--;
                     }
                 }
-                printf("\n");
                 m = cantidad_pixeles;
-                //printf("2 i: %d, j: %d - SUMB: %d SUMR: %d SUMG: %d\n",i,j,sumB,sumR,sumG);
-                /*if(j == imagen->ancho-m-1){
-                    //printf("LAST COUNt: %d\n",lastCount);
-                    avgG = (sumG/lastCount);
-                    avgR = (sumR/lastCount);
-                    avgB = (sumB/lastCount);
-                }else{
-                    avgG = (sumG/contadorAvg);
-                    avgR = (sumR/contadorAvg);
-                    avgB = (sumB/contadorAvg); 
-                }*/
                 avgG = (sumG/contadorAvg);
                 avgR = (sumR/contadorAvg);
                 avgB = (sumB/contadorAvg); 
                 
-
                 imagenNueva->pixel[i][filaNueva].B = avgB;
                 imagenNueva->pixel[i][filaNueva].G = avgG;
                 imagenNueva->pixel[i][filaNueva].R = avgR;
@@ -290,13 +274,67 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
         }
         i++;
     }
-
 }
 
-void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles){
+void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
+    int i,j,m;
+    int avgB, avgG, avgR; //Promedio de R,G,B
+    int filaNueva=0;
+    int** sumPixel;
+    sumPixel = (int**)malloc(sizeof(int*)*imagen->alto);
+    for(i = 0; i < imagen->alto; i++){
+        sumPixel[i] = (int*)malloc(sizeof(int)*3);
+    }
+
+    for(i = 0; i < imagen->alto; i++){
+        for(j = 0; j < 3; j++){
+            sumPixel[i][j] = 0;
+        }
+    }
+
+    j=0;
+    while(j < imagen->ancho){
+        m=0;
+        while(m < cantidad_pixeles){
+            if(j == imagen->ancho){
+                break;
+            }
+            else{
+                i=0;
+                while(i < imagen->alto){
+                    sumPixel[i][0] = sumPixel[i][0] + imagen->pixel[i][j].R;
+                    sumPixel[i][1] = sumPixel[i][1] + imagen->pixel[i][j].G;
+                    sumPixel[i][2] = sumPixel[i][2] + imagen->pixel[i][j].B;
+                    /*if(i == 0 || i == 1 || i == 2){
+                        printf("i: %d y j: %d y sumPixelSuma: %d\n", i,j,sumPixel[i][0]);
+                    }*/
+                    i++;
+                }
+                m++;
+                j++;
+            }
+        }
+
+        i = 0;
+        while(i < imagen->alto){
+            avgR = (sumPixel[i][0])/m;
+            avgG = (sumPixel[i][1])/m;
+            avgB = (sumPixel[i][2])/m;           
+
+            imagenNueva->pixel[i][filaNueva].B = avgB;
+            imagenNueva->pixel[i][filaNueva].G = avgG;
+            imagenNueva->pixel[i][filaNueva].R = avgR;
+
+            sumPixel[i][0] = 0;
+            sumPixel[i][1] = 0;
+            sumPixel[i][2] = 0;
+            i++;
+        }
+        filaNueva++;
+    } 
 }
 
-//Renombrar funcion
+//Renombrar funcion y borrar el retorno
 BMP* funcion(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
     //Recalcular largo o ancho y llamar a la función n veces de reducir fila o columna
     int i; 
@@ -331,17 +369,17 @@ BMP* funcion(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
     //método 1 -> fila
     //método 2 -> columnas
     //método 3 -> ambas
-    if(modo == 1 || modo == 3){
+   /*if(modo == 1 || modo == 3){
         for(i = 0; i < iteraciones; i++){
             reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
         }
-    }
-
-   /* if(modo == 2 || modo == 3){
-        for(i = 0; i < iteraciones; i++){
-            reducir_imagen_columna();
-        }
     }*/
+
+    if(modo == 2 || modo == 3){
+        for(i = 0; i < iteraciones; i++){
+            reducir_imagen_columna(imagen,cantidad_pixeles,imagenReducida);
+        }
+    }
     
 
     print_imagen(imagen);
