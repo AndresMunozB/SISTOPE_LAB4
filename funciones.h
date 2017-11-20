@@ -12,5 +12,8 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva);
 void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva);
 void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones);
 void print_imagen(BMP *imagen);
+int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue);
+int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mvalue, int ovalue);
+int fileExists(char* nombreArchivo);
 
 #endif

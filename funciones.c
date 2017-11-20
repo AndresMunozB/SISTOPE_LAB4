@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h>
 #include "funciones.h"
 
 long int traductor(int i, int j, int ancho,int offset){
@@ -444,4 +447,81 @@ void print_imagen(BMP *imagen){
         }
         printf("\n");
     }
+}
+
+int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue){
+
+    if(argc > 14){
+        printf("Sobran parametros.\n");
+        return 0;
+    }else if(argc < 13){
+        printf("Faltan parametros.\n");
+        return 0;
+    }
+    int c;
+    while ((c = getopt(argc,argv,"i:s:g:n:m:o:d")) != -1){
+        switch(c){
+            case 'i':
+                strcpy(ivalue,optarg);
+                break;
+            case 's':
+                strcpy(svalue,optarg);
+                break;
+            case 'g':
+                strcpy(gvalue,optarg);    
+                break;
+            case 'n':    
+                sscanf(optarg, "%d", nvalue);
+                break;
+            case 'm':
+                sscanf(optarg, "%d", mvalue);
+                break;
+            case 'o':
+                sscanf(optarg, "%d", ovalue);    
+                break;
+            case 'd':
+                *dvalue = 1;
+                break;
+            case '?':
+                if(isprint(optopt)){
+                    printf("Opcion desconocida.\n");   
+                    return 0;
+                }
+                else{ 
+                    printf("Opcion con caracter desconocido\n");
+                    return 0;
+                }
+            default:
+                abort();
+        }
+    }
+    return 1;
+}
+
+int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mvalue, int ovalue){
+    //Falta la verificacion de mvalue mayor que el ancho de la imagen
+    if(fileExists(ivalue) == 0){
+        printf("ERROR: Archivo no encontrado.\n");
+        return 0;
+    }else if(ovalue!=1 && ovalue!=2 && ovalue!=3){
+        printf("ERROR: Metodo Incorrecto.\n");
+        return 0;
+    }else if(nvalue<=0){
+        printf("ERROR: Cantidad de iteraciones debe ser mayor que 0.\n");
+        return 0;
+    }else if(mvalue<=0){
+        printf("ERROR: Cantidad de pixeles debe ser mayor que 0.\n");
+        return 0;
+    }else 
+        return 1;
+    return 1;
+}
+
+int fileExists(char* nombreArchivo){
+    FILE* archivo;
+    archivo = fopen(nombreArchivo, "r");
+    if(archivo == NULL)
+        return 0;
+    else
+        return 1;
 }
