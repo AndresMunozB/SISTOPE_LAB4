@@ -312,102 +312,53 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
 void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     int i = 0,j = 0;
     int m = cantidad_pixeles;
-    int colNueva = 0;
-    int avgB,avgG,avgR;
     int sumB = 0, sumR = 0, sumG = 0;
-    int contadorAvg = 0;
+    print_imagen(imagenNueva);
+    int k = 0;
+    int counter = 0;
 
-    while(i < imagen->ancho){
-        while(colNueva < imagenNueva->alto){
-            while(j < imagen->alto){
-                if(m == 0){
-                    break;
-                }
-                else{
-                    sumB = sumB  + imagen->pixel[j][i].B;
-                    sumR = sumR  + imagen->pixel[j][i].R;
-                    sumG = sumG  + imagen->pixel[j][i].G;
-                    //printf("SUMB: %d, SUMR: %d, SUMG: %d\n",sumB,sumR,sumG);
-                    contadorAvg++;
-                    m--;
-                    j++;
-                }
+    for(i=0;i<imagen->ancho;i++){
+        for(j=0;j<imagen->alto;j++){
+            counter++;
+            sumB += imagen->pixel[j][i].R;
+            sumR += imagen->pixel[j][i].R;
+            sumG += imagen->pixel[j][i].G;
+            /*printf("%d,%d,%d\n",j,i,k);
+            printf("counter: %d\n",counter );
+            printf("%d\n",sumG );
+            printf("%d\n",sumR );
+            printf("%d\n",sumB );*/
+
+            if (j==imagen->alto-1){
+                /*printf("hola\n");
+                printf("%d\n", sumR / counter);
+                printf("hola2\n");*/
+                imagenNueva->pixel[k][i].B = sumR / counter;
+                imagenNueva->pixel[k][i].R = sumB / counter;
+                imagenNueva->pixel[k][i].G = sumG / counter;
+                //printf("chao\n");
+                sumB = 0;
+                sumR = 0;
+                sumG = 0;
+                k = 0;
+                counter = 0;
             }
-            m = cantidad_pixeles;
 
-            avgG = (sumG/contadorAvg);
-            avgR = (sumR/contadorAvg);
-            avgB = (sumB/contadorAvg);
-            //printf("avgB: %d, avgR: %d, avgG: %d\n",avgB,avgR,avgG);
-
-            imagenNueva->pixel[colNueva][i].B = avgB;
-            imagenNueva->pixel[colNueva][i].G = avgG;
-            imagenNueva->pixel[colNueva][i].R = avgR;
-
-            sumB = 0;
-            sumR = 0;
-            sumG = 0;
-
-            contadorAvg = 0;
-            colNueva++;
-        }
-        colNueva = 0;
-        j=0;
-        printf("\n\n");
-        i++;
-    }
-   /* int i,j,m;
-    int avgB, avgG, avgR; //Promedio de R,G,B
-    int filaNueva=0;
-    int** sumPixel;
-    sumPixel = (int**)malloc(sizeof(int*)*imagen->alto);
-    for(i = 0; i < imagen->alto; i++){
-        sumPixel[i] = (int*)malloc(sizeof(int)*3);
-    }
-
-    for(i = 0; i < imagen->alto; i++){
-        for(j = 0; j < 3; j++){
-            sumPixel[i][j] = 0;
-        }
-    }
-
-    j=0;
-    while(j < imagen->ancho){
-        m=0;
-        while(m < cantidad_pixeles){
-            if(j == imagen->ancho){
-                break;
+            if (counter == m){
+                imagenNueva->pixel[k][i].B = sumR / m;
+                imagenNueva->pixel[k][i].R = sumB / m;
+                imagenNueva->pixel[k][i].G = sumG / m;
+                sumB = 0;
+                sumR = 0;
+                sumG = 0;
+                counter = 0;
+                k++;
             }
-            else{
-                i=0;
-                while(i < imagen->alto){
-                    sumPixel[i][0] = sumPixel[i][0] + imagen->pixel[i][j].R;
-                    sumPixel[i][1] = sumPixel[i][1] + imagen->pixel[i][j].G;
-                    sumPixel[i][2] = sumPixel[i][2] + imagen->pixel[i][j].B;
-                    i++;
-                }
-                m++;
-                j++;
-            }
+
         }
-
-        i = 0;
-        while(i < imagen->alto){
-            avgR = (sumPixel[i][0])/m;
-            avgG = (sumPixel[i][1])/m;
-            avgB = (sumPixel[i][2])/m;           
-
-            imagenNueva->pixel[i][filaNueva].B = avgB;
-            imagenNueva->pixel[i][filaNueva].G = avgG;
-            imagenNueva->pixel[i][filaNueva].R = avgR;
-
-            sumPixel[i][0] = 0;
-            sumPixel[i][1] = 0;
-            sumPixel[i][2] = 0;
-            i++;
-        }
-        filaNueva++;
-    } */
+        j++;
+    }
+   
 }
 
 void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* new_imagen){
