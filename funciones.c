@@ -61,8 +61,6 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     }
 }
 
-
-
 void abrir_imagen(BMP *imagen, char *ruta, int modo){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
     //int i,j;
@@ -118,7 +116,7 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
         //CARGAR POR FILA
         cargar_matriz_fila(imagen,archivo);
     }
-    else if(modo == 0){
+    else if(modo == 2){
         //CARGAR POR COLUMNA
         cargar_matriz_columna(imagen,archivo);
     }
@@ -203,8 +201,7 @@ void copiar_bitmap(BMP* src, BMP* dest){
     dest->coloresUsados = src->coloresUsados;
     dest->coloresImportantes = src->coloresImportantes;
 }
-
-
+ 
 void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
     if (modo == 1){
         if(imagen->ancho%cantidad_pixeles == 0){
@@ -227,7 +224,6 @@ void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
     for( i=0; i<imagen->alto; i++){
         imagen->pixel[i]=(Pixel*) malloc (imagen->ancho* sizeof(Pixel)); 
     }
-
 }
 
 void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
@@ -314,7 +310,53 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
 }
 
 void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
-    int i,j,m;
+    int i = 0,j = 0;
+    int m = cantidad_pixeles;
+    int colNueva = 0;
+    int avgB,avgG,avgR;
+    int sumB = 0, sumR = 0, sumG = 0;
+    int contadorAvg = 0;
+
+    while(i < imagen->ancho){
+        while(colNueva < imagenNueva->alto){
+            while(j < imagen->alto){
+                if(m == 0){
+                    break;
+                }
+                else{
+                    sumB = sumB  + imagen->pixel[j][i].B;
+                    sumR = sumR  + imagen->pixel[j][i].R;
+                    sumG = sumG  + imagen->pixel[j][i].G;
+                    //printf("SUMB: %d, SUMR: %d, SUMG: %d\n",sumB,sumR,sumG);
+                    contadorAvg++;
+                    m--;
+                    j++;
+                }
+            }
+            m = cantidad_pixeles;
+
+            avgG = (sumG/contadorAvg);
+            avgR = (sumR/contadorAvg);
+            avgB = (sumB/contadorAvg);
+            //printf("avgB: %d, avgR: %d, avgG: %d\n",avgB,avgR,avgG);
+
+            imagenNueva->pixel[colNueva][i].B = avgB;
+            imagenNueva->pixel[colNueva][i].G = avgG;
+            imagenNueva->pixel[colNueva][i].R = avgR;
+
+            sumB = 0;
+            sumR = 0;
+            sumG = 0;
+
+            contadorAvg = 0;
+            colNueva++;
+        }
+        colNueva = 0;
+        j=0;
+        printf("\n\n");
+        i++;
+    }
+   /* int i,j,m;
     int avgB, avgG, avgR; //Promedio de R,G,B
     int filaNueva=0;
     int** sumPixel;
@@ -365,7 +407,7 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
             i++;
         }
         filaNueva++;
-    } 
+    } */
 }
 
 void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* new_imagen){
@@ -408,8 +450,8 @@ void print_imagen(BMP *imagen){
     printf("Colores Usados %d\n",imagen->coloresUsados);
     printf("Colores Importantes %d\n",imagen->coloresImportantes);
 
-    printf("PIXEL:\n");
-    /*for(int i = 0; i < imagen->alto; i++){
+   /* printf("PIXEL:\n");
+    for(int i = 0; i < imagen->alto; i++){
         printf("%d - ", i+1);
         for(int j = 0; j < imagen->ancho; j++){
             printf("(%d,",imagen->pixel[i][j].R);
@@ -496,7 +538,6 @@ int fileExists(char* nombreArchivo){
     else
         return 1;
 }
-
 
 void clock_start(Clock* clock){
     clock->startTime = times(&clock->startTms);

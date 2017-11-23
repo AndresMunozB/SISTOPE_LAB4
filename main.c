@@ -38,16 +38,16 @@ int main(int argc,char** argv){
 	BMP imgRed;			
 	char IMAGEN[45];
 	
-
 	strcpy(IMAGEN,ivalue);
 	abrir_imagen(&img,IMAGEN,ovalue);
 
+	print_imagen(&img);
 	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
+	print_imagen(&imgRed);
 	
-	
-	if(dflag == 1){
+	/*if(dflag == 1){
 		//printf("Tiempo de ejecucion: %d seg.\n", seconds);
-	}
+	}*/
 	
 	crear_imagen(&imgRed,IMAGEN_TRATADA);
 	clock_end(&clock);
