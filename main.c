@@ -33,7 +33,8 @@ int main(int argc,char** argv){
     }
 
 	
-	BMP img;				
+	BMP img;	
+	BMP imgRed;			
 	char IMAGEN[45];		
 
 	time_t startTime, endTime;
@@ -42,13 +43,13 @@ int main(int argc,char** argv){
 
 	strcpy(IMAGEN,ivalue);
 	abrir_imagen(&img,IMAGEN,1);
-	reduce_imagen(&img,ovalue,mvalue,nvalue);
+	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
 	
 	endTime = time(NULL);
 	seconds = endTime - startTime;
 	if(dflag == 1)
 		printf("Tiempo de ejecucion: %d seg.\n", seconds);
 	
-	crear_imagen(&img,IMAGEN_TRATADA);
+	crear_imagen(&imgRed,IMAGEN_TRATADA);
 	exit (0);
 }

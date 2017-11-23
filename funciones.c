@@ -319,9 +319,9 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     } 
 }
 
-void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones){
+void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* imagenReducida){
     int i; 
-    BMP* imagenReducida;
+   // BMP* imagenReducida;
     BMP* imagenRedCol;
    
     imagenReducida = (BMP*)malloc(sizeof(BMP));
