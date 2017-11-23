@@ -15,11 +15,13 @@ int main(int argc,char** argv){
 	char svalue[300];
 	char gvalue[300];
 	int nvalue,mvalue,ovalue,dflag;
-	if(!opt_get(argc,argv,ivalue,svalue,gvalue,&nvalue,&mvalue,&ovalue,&dflag))
+	if(!opt_get(argc,argv,ivalue,svalue,gvalue,&nvalue,&mvalue,&ovalue,&dflag)){
         return 0;  
+	}
    
-    if(verifyArguments(ivalue,svalue,gvalue,nvalue,mvalue,ovalue) == 0) 
+    if(verifyArguments(ivalue,svalue,gvalue,nvalue,mvalue,ovalue) == 0) {
         return 0;
+    }
 
 	//int i,j; 				//Variables auxiliares para loops
 	BMP img;				//Estructura de tipo imÃ¡gen
