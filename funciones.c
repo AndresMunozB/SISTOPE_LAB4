@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -51,25 +50,10 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     int i=0;
     int j=0;
     while(i<imagen->ancho){
-       
-        
-        if(i%2 == 0){
-             j=0;
-            while(j<imagen->alto){
-                //printf("%d,%d ",j,i );
-                cargar_pixel(j,i,archivo,imagen);
-                j++;
-            }
-            //printf("\n");
-        }
-        else{
-            j--;
-            while(j>=0){
-                //printf("%d,%d ",j,i );
-                cargar_pixel(j,i,archivo,imagen);
-                j--;
-            }
-            //printf("\n");
+        j=0;
+        while(j<imagen->alto){
+            cargar_pixel(j,i,archivo,imagen);
+            j++;
         }
         i++;
     }
@@ -341,8 +325,7 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones)
    
     imagenReducida = (BMP*)malloc(sizeof(BMP));
     imagenReducida->bm[0] = imagen->bm[0];
-    imagenReducida->bm[1] = imagen->bm[1];
-    imagenReducida->bm[2] = '\0';
+    imagenReducida->bm[1] = imagen->bm[1];  
     imagenReducida->tamano = imagen->tamano;
     imagenReducida->reservado = imagen->reservado;
     imagenReducida->offset = imagen->offset;
