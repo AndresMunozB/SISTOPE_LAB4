@@ -1,4 +1,4 @@
 all:
 	gcc -o main main.c funciones.c -Wall
-	echo "-i nombre_entrada -s nombre_salida -n veces_reduccion -m cantidad_pıxeles -d mostrar_time"
+	echo "./main -i cuadro.bmp -s salida1.txt -g salida2.txt -n 8 -m 13 -o 1 -d"
 	
