@@ -60,6 +60,8 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     }
 }
 
+
+
 void abrir_imagen(BMP *imagen, char *ruta, int modo){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
     //int i,j;
@@ -106,8 +108,9 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     //Reservar memoria para el arreglo que tendra la imÃ¡gen en escala de grises (Arreglo de tamaÃ±o "img.ancho X img.alto")
     int i;
     imagen->pixel=(Pixel**) malloc (imagen->alto* sizeof(Pixel*)); 
-    for( i=0; i<imagen->alto; i++)
+    for( i=0; i<imagen->alto; i++){
         imagen->pixel[i]=(Pixel*) malloc (imagen->ancho* sizeof(Pixel)); 
+    }
     
 
     if (modo==1){
@@ -179,6 +182,51 @@ void crear_imagen(BMP *imagen, char ruta[]){
     }
     //Cerrrar el archivo
     fclose(archivo);
+}
+
+void copiar_bitmap(BMP* src, BMP* dest){
+    dest->bm[0] = src->bm[0];
+    dest->bm[1] = src->bm[1];
+    dest->tamano = src->tamano ;
+    dest->reservado = src->reservado;
+    dest->offset = src->offset;
+    dest->tamanoMetadatos = src->tamanoMetadatos;
+    dest->alto = src->alto;
+    dest->ancho = src->ancho;
+    dest->numeroPlanos = src->numeroPlanos ;
+    dest->profundidadColor = src->profundidadColor;
+    dest->tipoCompresion = src->tipoCompresion;
+    dest->tamanoEstructura = src->tamanoEstructura;
+    dest->pxmh = src->pxmh;
+    dest->pxmv = src->pxmv;
+    dest->coloresUsados = src->coloresUsados;
+    dest->coloresImportantes = src->coloresImportantes;
+}
+
+
+void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
+    if (modo == 1){
+        if(imagen->ancho%cantidad_pixeles == 0){
+            imagen->ancho = imagen->ancho/cantidad_pixeles;
+        }
+        else{
+            imagen->ancho = (imagen->ancho/cantidad_pixeles) + 1;
+        }
+    }
+    if (modo == 2){
+        if(imagen->alto%cantidad_pixeles == 0){
+            imagen->alto = imagen->alto/cantidad_pixeles;
+        }else{
+            imagen->alto = (imagen->alto/cantidad_pixeles) + 1;
+        }
+    }
+     
+    int i;
+    imagen->pixel=(Pixel**) malloc (imagen->alto * sizeof(Pixel*)); 
+    for( i=0; i<imagen->alto; i++){
+        imagen->pixel[i]=(Pixel*) malloc (imagen->ancho* sizeof(Pixel)); 
+    }
+
 }
 
 void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
@@ -405,7 +453,7 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,
 }
 
 void print_imagen(BMP *imagen){
-    printf("Bm %s%s\n",&imagen->bm[0],&imagen->bm[1]);
+    printf("Bm %c%c\n",imagen->bm[0],imagen->bm[1]);
     printf("Tamano %d\n",imagen->tamano);
     printf("reservado %d\n",imagen->reservado);
     printf("offset %d\n",imagen->offset);
@@ -422,7 +470,7 @@ void print_imagen(BMP *imagen){
     printf("Colores Importantes %d\n",imagen->coloresImportantes);
 
     printf("PIXEL:\n");
-    for(int i = 0; i < imagen->alto; i++){
+    /*for(int i = 0; i < imagen->alto; i++){
         printf("%d - ", i+1);
         for(int j = 0; j < imagen->ancho; j++){
             printf("(%d,",imagen->pixel[i][j].R);
@@ -430,7 +478,7 @@ void print_imagen(BMP *imagen){
             printf("%d) ",imagen->pixel[i][j].B);
         }
         printf("\n");
-    }
+    }*/
 }
 
 int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue){

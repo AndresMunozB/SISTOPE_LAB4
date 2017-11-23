@@ -16,4 +16,8 @@ int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue
 int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mvalue, int ovalue);
 int fileExists(char* nombreArchivo);
 
+void copiar_bitmap(BMP* src, BMP* dest);
+void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo);
+
+
 #endif

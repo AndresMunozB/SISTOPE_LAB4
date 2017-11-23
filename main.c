@@ -35,21 +35,28 @@ int main(int argc,char** argv){
 	
 	BMP img;	
 	BMP imgRed;			
-	char IMAGEN[45];		
-
+	char IMAGEN[45];
+	/*
 	time_t startTime, endTime;
 	unsigned int seconds;
-	startTime = time(NULL);
+	startTime = time(NULL);*/
 
 	strcpy(IMAGEN,ivalue);
 	abrir_imagen(&img,IMAGEN,1);
-	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
+	
+	copiar_bitmap(&img,&imgRed);
+	//printf("%c%c\n",imgRed.bm[0],imgRed.bm[1] );
+	print_imagen(&imgRed);
+	init_new_imagen(&imgRed,3,2);
+	printf("\n" );
+	print_imagen(&imgRed);
+	/*reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
 	
 	endTime = time(NULL);
 	seconds = endTime - startTime;
 	if(dflag == 1)
 		printf("Tiempo de ejecucion: %d seg.\n", seconds);
 	
-	crear_imagen(&imgRed,IMAGEN_TRATADA);
+	crear_imagen(&imgRed,IMAGEN_TRATADA);*/
 	exit (0);
 }
