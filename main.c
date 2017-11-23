@@ -11,6 +11,15 @@
 
 int main(int argc,char** argv){
 
+	/*  -i: nombre archivo de entrada
+		-s: nombre archivo de salida método 1
+		-g: nombre archivo de salida método 2
+		-n: cantidad de iteraciones a reducir la imagen
+		-m: cantidad de pixeles a promediar
+		-o: método a utilizar (1,2 o 3)
+		-d: bandera que muestra resultados de tiempo de ejecución.
+	*/
+
 	char ivalue[300];
 	char svalue[300];
 	char gvalue[300];
@@ -30,16 +39,14 @@ int main(int argc,char** argv){
 	time_t startTime, endTime;
 	unsigned int seconds;
 	startTime = time(NULL);
+
 	strcpy(IMAGEN,ivalue);
 	abrir_imagen(&img,IMAGEN,1);
-
-
 	reduce_imagen(&img,ovalue,mvalue,nvalue);
 	
-			
 	endTime = time(NULL);
 	seconds = endTime - startTime;
-	printf("Elapsed time (s): %d\n", seconds);
+	printf("Tiempo de ejecucion: %d seg.\n", seconds);
 	
 	crear_imagen(&img,IMAGEN_TRATADA);
 	exit (0);

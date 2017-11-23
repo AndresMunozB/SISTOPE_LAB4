@@ -1,4 +1,5 @@
-#include <stdio.h> #include <stdlib.h>
+#include <stdio.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -397,10 +398,10 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones)
     }
 
    // print_imagen(imagen);
-    print_imagen(imagenReducida);
-    printf("--------------------------------------------------\n");
-    if(modo == 3)
-        print_imagen(imagenRedCol);
+   // print_imagen(imagenReducida);
+   // printf("--------------------------------------------------\n");
+   // if(modo == 3)
+   //     print_imagen(imagenRedCol);
 }
 
 void print_imagen(BMP *imagen){
