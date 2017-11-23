@@ -46,7 +46,8 @@ int main(int argc,char** argv){
 	
 	endTime = time(NULL);
 	seconds = endTime - startTime;
-	printf("Tiempo de ejecucion: %d seg.\n", seconds);
+	if(dflag == 1)
+		printf("Tiempo de ejecucion: %d seg.\n", seconds);
 	
 	crear_imagen(&img,IMAGEN_TRATADA);
 	exit (0);
