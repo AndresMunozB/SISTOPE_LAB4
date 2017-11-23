@@ -32,6 +32,15 @@ typedef struct BMP
 
 }BMP;
 
+typedef struct Clock
+{
+    clock_t startTime, endTime;
+    struct tms startTms, endTms;
+    unsigned int micros;
+    long int ticksPerSec;
+    
+}Clock;
+
 
 
 

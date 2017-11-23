@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/times.h>
 #include <unistd.h>
 #include "funciones.h"
 
@@ -367,89 +368,27 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     } 
 }
 
-void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* imagenReducida){
-    int i; 
-   // BMP* imagenReducida;
-    BMP* imagenRedCol;
-   
-    imagenReducida = (BMP*)malloc(sizeof(BMP));
-    imagenReducida->bm[0] = imagen->bm[0];
-    imagenReducida->bm[1] = imagen->bm[1];  
-    imagenReducida->tamano = imagen->tamano;
-    imagenReducida->reservado = imagen->reservado;
-    imagenReducida->offset = imagen->offset;
-    imagenReducida->tamanoMetadatos = imagen->tamanoMetadatos;
-    imagenReducida->alto = imagen->alto;
-    imagenReducida->numeroPlanos = imagen->numeroPlanos;
-    imagenReducida->profundidadColor = imagen->profundidadColor;
-    imagenReducida->tipoCompresion = imagen->tipoCompresion;
-    imagenReducida->tamanoEstructura = imagen->tamanoEstructura;
-    imagenReducida->pxmh = imagen->pxmh;
-    imagenReducida->pxmv = imagen->pxmv;
-    imagenReducida->coloresUsados = imagen->coloresUsados;
-    imagenReducida->coloresImportantes = imagen->coloresImportantes;
-    if(imagen->ancho%cantidad_pixeles == 0){
-        imagenReducida->ancho = imagen->ancho/cantidad_pixeles;
-    }else{
-        imagenReducida->ancho = (imagen->ancho/cantidad_pixeles) + 1;
-    }
-    imagenReducida->pixel=(Pixel**) malloc (imagenReducida->alto* sizeof(Pixel*)); 
-    for(i = 0; i < imagenReducida->alto; i++){
-        imagenReducida->pixel[i] = (Pixel*)malloc(sizeof(Pixel)*imagenReducida->ancho);
-    }
-
-    //primer parametro -> siempre imagen original
-    //método 1 -> fila
-    //método 2 -> columnas
-    //método 3 -> ambas
+void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* new_imagen){
+    int i;
+    copiar_bitmap(imagen,new_imagen);
+    init_new_imagen(new_imagen,cantidad_pixeles,modo);
     if(modo == 1){
-        for(i = 0; i < iteraciones; i++){
-            reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
+        printf("%d\n", new_imagen->ancho);
+        printf("%d\n", new_imagen->alto);
+        for (i = 0; i < iteraciones; i++)
+        {
+            reducir_imagen_fila(imagen,cantidad_pixeles,new_imagen);
         }
-    }else if(modo == 2){
-        for(i = 0; i < iteraciones; i++){
-            reducir_imagen_columna(imagen,cantidad_pixeles,imagenReducida);
-        }
-    }else{
-        for(i = 0; i < iteraciones; i++){
-            reducir_imagen_fila(imagen,cantidad_pixeles,imagenReducida);
-        }
-        imagenRedCol = (BMP*)malloc(sizeof(BMP));
-        imagenRedCol->bm[0] = imagen->bm[0];
-        imagenRedCol->bm[1] = imagen->bm[1];
-        imagenRedCol->bm[2] = '\0';
-        imagenRedCol->tamano = imagen->tamano;
-        imagenRedCol->reservado = imagen->reservado;
-        imagenRedCol->offset = imagen->offset;
-        imagenRedCol->tamanoMetadatos = imagen->tamanoMetadatos;
-        imagenRedCol->alto = imagen->alto;
-        imagenRedCol->numeroPlanos = imagen->numeroPlanos;
-        imagenRedCol->profundidadColor = imagen->profundidadColor;
-        imagenRedCol->tipoCompresion = imagen->tipoCompresion;
-        imagenRedCol->tamanoEstructura = imagen->tamanoEstructura;
-        imagenRedCol->pxmh = imagen->pxmh;
-        imagenRedCol->pxmv = imagen->pxmv;
-        imagenRedCol->coloresUsados = imagen->coloresUsados;
-        imagenRedCol->coloresImportantes = imagen->coloresImportantes;
-        if(imagen->ancho%cantidad_pixeles == 0){
-            imagenRedCol->ancho = imagen->ancho/cantidad_pixeles;
-        }else{
-            imagenRedCol->ancho = (imagen->ancho/cantidad_pixeles) + 1;
-        }
-        imagenRedCol->pixel=(Pixel**) malloc (imagenRedCol->alto* sizeof(Pixel*)); 
-        for(i = 0; i < imagenRedCol->alto; i++){
-            imagenRedCol->pixel[i] = (Pixel*)malloc(sizeof(Pixel)*imagenRedCol->ancho);
-        }
-        for(i = 0; i < iteraciones; i++){
-            reducir_imagen_columna(imagen,cantidad_pixeles,imagenRedCol);
+    }
+    else if(modo == 2){
+        printf("%d\n", new_imagen->ancho);
+        printf("%d\n", new_imagen->alto);
+        for (i = 0; i < iteraciones; i++)
+        {
+            reducir_imagen_columna(imagen,cantidad_pixeles,new_imagen);
         }
     }
 
-   // print_imagen(imagen);
-   // print_imagen(imagenReducida);
-   // printf("--------------------------------------------------\n");
-   // if(modo == 3)
-   //     print_imagen(imagenRedCol);
 }
 
 void print_imagen(BMP *imagen){
@@ -556,4 +495,22 @@ int fileExists(char* nombreArchivo){
         return 0;
     else
         return 1;
+}
+
+
+void clock_start(Clock* clock){
+    clock->startTime = times(&clock->startTms);
+}
+void clock_end(Clock* clock){
+    clock->endTime = times(&clock->endTms);
+    clock->micros = clock->endTime - clock->startTime;
+    clock->ticksPerSec = sysconf(_SC_CLK_TCK);
+}
+void clock_print(Clock* clock){
+    printf("CLK_TCK = %ld\n", clock->ticksPerSec);
+    printf("Elapsed time (us): %lu\n", clock->micros*1000000/clock->ticksPerSec);
+    printf("CPU user time (us): %lu\n",
+    (clock->endTms.tms_utime - clock->startTms.tms_utime)*1000000/clock->ticksPerSec);
+    printf("CPU system time (us): %lu\n",
+    (clock->endTms.tms_stime - clock->startTms.tms_stime)*1000000/clock->ticksPerSec);
 }

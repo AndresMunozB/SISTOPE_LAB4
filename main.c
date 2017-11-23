@@ -1,15 +1,16 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <sys/times.h>
 #include <unistd.h>
-#include <time.h>
+#include <string.h>
 #include "funciones.h"
 
 
 #define IMAGEN_TRATADA "tratada.bmp"
 
 int main(int argc,char** argv){
+
+	Clock clock;
+	clock_start(&clock);
 
 	/*  -i: nombre archivo de entrada
 		-s: nombre archivo de salida método 1
@@ -36,27 +37,22 @@ int main(int argc,char** argv){
 	BMP img;	
 	BMP imgRed;			
 	char IMAGEN[45];
-	/*
-	time_t startTime, endTime;
-	unsigned int seconds;
-	startTime = time(NULL);*/
+	
 
 	strcpy(IMAGEN,ivalue);
-	abrir_imagen(&img,IMAGEN,1);
+	abrir_imagen(&img,IMAGEN,ovalue);
+
+	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
 	
-	copiar_bitmap(&img,&imgRed);
-	//printf("%c%c\n",imgRed.bm[0],imgRed.bm[1] );
-	print_imagen(&imgRed);
-	init_new_imagen(&imgRed,3,2);
-	printf("\n" );
-	print_imagen(&imgRed);
-	/*reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
 	
-	endTime = time(NULL);
-	seconds = endTime - startTime;
-	if(dflag == 1)
-		printf("Tiempo de ejecucion: %d seg.\n", seconds);
+	if(dflag == 1){
+		//printf("Tiempo de ejecucion: %d seg.\n", seconds);
+	}
 	
-	crear_imagen(&imgRed,IMAGEN_TRATADA);*/
-	exit (0);
+	crear_imagen(&imgRed,IMAGEN_TRATADA);
+	clock_end(&clock);
+	clock_print(&clock);
+
+
+	return 0;
 }

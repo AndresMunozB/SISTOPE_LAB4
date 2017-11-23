@@ -20,4 +20,11 @@ void copiar_bitmap(BMP* src, BMP* dest);
 void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo);
 
 
+
+void clock_start(Clock* clock);
+void clock_end(Clock* clock);
+void clock_print(Clock* clock);
+
+
+
 #endif
