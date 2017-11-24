@@ -11,7 +11,7 @@
 //Traduce una posición i,j a una posición del pixel dentro del archivo de la imagen.
 long int traductor(int i, int j, int ancho,int offset){
     long int pixel_offset = sizeof(char) * 3;
-    long int result = (pixel_offset*((i*ancho)+j)) + offset;
+    long int result = (pixel_offset*((i*ancho)+j)) + offset+ ((ancho*pixel_offset)%4);
     return result;
 }
 
@@ -143,7 +143,19 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     //Cerrrar el archivo
     fclose(archivo);    
 }
+void rellenar_padding(FILE* archivo,BMP* imagen){
+    int i;
+    int mod = (imagen->ancho*(sizeof(char)))%4;
+    if(mod != 0){
+        for(i=0;i<mod;i++){
+            fwrite(&imagen->pixel[0][0].B,sizeof(char),1, archivo);
+            
+            //fwrite('0',sizeof(char),1, archivo);
+            //fwrite('0',sizeof(char),1, archivo);
 
+        }
+    }
+}
 //ENTRADA: Estructura BMP, arreglo de caracteres que es la ruta
 //SALIDA: void
 //La función abre un archivo de salida para poder escribir todos los elementos que contiene la imagen BMP, incluyendo los pixeles de la imagen (R,G,B)
@@ -188,7 +200,10 @@ void crear_imagen(BMP *imagen, char ruta[]){
             fwrite(&imagen->pixel[i][j].B,sizeof(char),1, archivo);  //Escribir el Byte Blue del pixel 
             fwrite(&imagen->pixel[i][j].G,sizeof(char),1, archivo);  //Escribir el Byte Green del pixel
             fwrite(&imagen->pixel[i][j].R,sizeof(char),1, archivo);  //Escribir el Byte Red del pixel
-        }   
+
+        }
+        rellenar_padding(archivo,imagen);
+
     }
     //Cerrrar el archivo
     fclose(archivo);
