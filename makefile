@@ -1,4 +1,4 @@
 all:
 	gcc -o main main.c funciones.c -Wall
-	echo "./main -i cuadro.bmp -s salida1.txt -g salida2.txt -n 8 -m 13 -o 1 -d"
+	echo "./main -i cuadro.bmp -s metodo1.bmp -g metodo2.bmp -n 8 -m 3 -o 3 -d"
 	

@@ -21,7 +21,6 @@ int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mv
 int fileExists(char* nombreArchivo);
 void clock_start(Clock* clock);
 void clock_end(Clock* clock);
-void clock_print(Clock* clock);
-
+void clock_print(Clock* clock,int modo);
 
 #endif

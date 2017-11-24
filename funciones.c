@@ -439,9 +439,9 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,
     }
 }
 
-//ENTRADA:
-//SALIDA:
-//
+//ENTRADA: Todos los valores que ingresan por parametro con getopt
+//SALIDA: Entero (0 o 1)
+//Se encarga de tomar todos los valores ingresados por consola, de verificar si se ingresaron de manera correcta o no. 
 int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue){
 
     if(argc > 14){
@@ -491,9 +491,9 @@ int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue
     return 1;
 }
 
-//ENTRADA:
-//SALIDA:
-//
+//ENTRADA: Todos los valores que ingresan por parametro con getopt
+//SALIDA: Entero (0 o 1)
+//Esta función abarca las pequeñas funciones anteriores, donde se verifican si todos los parametros cumplen las condiciones.
 int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mvalue, int ovalue){
     //Falta la verificacion de mvalue mayor que el ancho de la imagen
     if(fileExists(ivalue) == 0){
@@ -513,9 +513,10 @@ int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mv
     return 1;
 }
 
-//ENTRADA:
-//SALIDA:
-//
+//ENTRADA: String que corresponde al nombre del archivo
+//SALIDA: Entero (0 o 1)
+//Esta función se encarga de verificar si el archivo con el nombre ingresado por parámetro existe o no. 
+// Si retorna 0, el archivo no existe y en caso contrario, retorna 1. 
 int fileExists(char* nombreArchivo){
     FILE* archivo;
     archivo = fopen(nombreArchivo, "r");
@@ -525,31 +526,34 @@ int fileExists(char* nombreArchivo){
         return 1;
 }
 
-//ENTRADA:
-//SALIDA:
-//
+//ENTRADA: Estructura Clock que seria el reloj
+//SALIDA: void
+//Inicia un reloj.
 void clock_start(Clock* clock){
     clock->startTime = times(&clock->startTms);
 }
 
-//ENTRADA:
-//SALIDA:
-//
+//ENTRADA: Estructura Clock que seria el reloj
+//SALIDA: void
+// Funcion que modifica los valores para el termino de un reloj
 void clock_end(Clock* clock){
     clock->endTime = times(&clock->endTms);
     clock->micros = clock->endTime - clock->startTime;
     clock->ticksPerSec = sysconf(_SC_CLK_TCK);
 }
 
-//ENTRADA:
-//SALIDA:
-//
-void clock_print(Clock* clock){
-    printf("\n\n");
-    printf("CLK_TCK = %ld\n", clock->ticksPerSec);
-    printf("Elapsed time (us): %lu\n", clock->micros*1000000/clock->ticksPerSec);
-    printf("CPU user time (us): %lu\n",
-    (clock->endTms.tms_utime - clock->startTms.tms_utime)*1000000/clock->ticksPerSec);
-    printf("CPU system time (us): %lu\n",
-    (clock->endTms.tms_stime - clock->startTms.tms_stime)*1000000/clock->ticksPerSec);
+//ENTRADA: Estructura Clock que seria el reloj. entero del metodo utilizado
+//SALIDA: void
+//Imprime por pantalla el tiempo que ha trascurrido del reloj hasta el momento que se llama a esta funcion.
+void clock_print(Clock* clock,int modo){
+    //printf("\n\n");
+    //printf("CLK_TCK = %ld\n", clock->ticksPerSec);
+    //float segundos = (float) 1;
+    clock->endTime = times(&clock->endTms);
+    clock->micros = clock->endTime - clock->startTime;
+    clock->ticksPerSec = sysconf(_SC_CLK_TCK);
+    printf("METODO:%d\n",modo);
+    printf("Tiempo real          : %.2f segundos.\n", (float)clock->micros/clock->ticksPerSec);
+    printf("Tiempo de usuario CPU: %.2f segundos.\n",(clock->endTms.tms_utime - clock->startTms.tms_utime)/(float)clock->ticksPerSec);
+    printf("Tiempo de sistema CPU: %.2f segundos.\n\n",(clock->endTms.tms_stime - clock->startTms.tms_stime)/(float)clock->ticksPerSec);
 }

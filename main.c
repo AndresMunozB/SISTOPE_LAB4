@@ -10,8 +10,8 @@
 
 int main(int argc,char** argv){
 
-	Clock clock;
-	clock_start(&clock);
+	//Clock clock;
+	//clock_start(&clock);
 
 	/*  -i: nombre archivo de entrada
 		-s: nombre archivo de salida método 1
@@ -47,8 +47,7 @@ int main(int argc,char** argv){
 		abrir_imagen(&original,ivalue,ovalue);
 		reduce_imagen(&original,ovalue,mvalue,nvalue,&imagen_fila);
 		crear_imagen(&imagen_fila,svalue);
-		clock_end(&clock_1);
-		clock_print(&clock_1);
+		clock_print(&clock_1,1);
 		destruir_imagen(&original);
 		destruir_imagen(&imagen_fila);
 
@@ -58,8 +57,7 @@ int main(int argc,char** argv){
 		abrir_imagen(&original,ivalue,ovalue);
 		reduce_imagen(&original,ovalue,mvalue,nvalue,&imagen_columna);
 		crear_imagen(&imagen_columna,gvalue);
-		clock_end(&clock_2);
-		clock_print(&clock_2);
+		clock_print(&clock_2,2);
 		destruir_imagen(&original);
 		destruir_imagen(&imagen_columna);
 	}
@@ -70,8 +68,7 @@ int main(int argc,char** argv){
 		abrir_imagen(&original,ivalue,1);
 		reduce_imagen(&original,1,mvalue,nvalue,&imagen_fila);
 		crear_imagen(&imagen_fila,svalue);
-		clock_end(&clock_1);
-		clock_print(&clock_1);
+		clock_print(&clock_1,1);
 		destruir_imagen(&original);
 		destruir_imagen(&imagen_fila);
 
@@ -79,12 +76,11 @@ int main(int argc,char** argv){
 		abrir_imagen(&original,ivalue,2);
 		reduce_imagen(&original,2,mvalue,nvalue,&imagen_columna);
 		crear_imagen(&imagen_columna,gvalue);
-		clock_end(&clock_2);
-		clock_print(&clock_2);
+		clock_print(&clock_2,2);
 		destruir_imagen(&original);
 		destruir_imagen(&imagen_columna);
 		clock_end(&clock_3);
-		clock_print(&clock_3);
+		clock_print(&clock_3,3);
 	}
 
 
