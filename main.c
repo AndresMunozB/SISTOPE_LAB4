@@ -39,8 +39,9 @@ int main(int argc,char** argv){
 	char IMAGEN[45];
 	
 	strcpy(IMAGEN,ivalue);
+	printf("hola\n");
 	abrir_imagen(&img,IMAGEN,ovalue);
-
+	printf("chao\n");
 	print_imagen(&img);
 	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
 	print_imagen(&imgRed);

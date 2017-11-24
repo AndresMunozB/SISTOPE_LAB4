@@ -55,10 +55,13 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
         j=0;
         while(j<imagen->alto){
             cargar_pixel(j,i,archivo,imagen);
+            //printf("%d,%d\n",i,j );
             j++;
         }
+
         i++;
     }
+    //printf("columna\n");
 }
 
 void abrir_imagen(BMP *imagen, char *ruta, int modo){
@@ -81,8 +84,8 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     fread(&imagen->reservado,sizeof(int),1, archivo);   
     fread(&imagen->offset,sizeof(int),1, archivo);  
     fread(&imagen->tamanoMetadatos,sizeof(int),1, archivo); 
-    fread(&imagen->alto,sizeof(int),1, archivo);    
     fread(&imagen->ancho,sizeof(int),1, archivo);   
+    fread(&imagen->alto,sizeof(int),1, archivo);    
     fread(&imagen->numeroPlanos,sizeof(short int),1, archivo);  
     fread(&imagen->profundidadColor,sizeof(short int),1, archivo);  
     fread(&imagen->tipoCompresion,sizeof(int),1, archivo);
@@ -98,11 +101,11 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
         printf ("La imagen debe ser un bitmap.\n"); 
         exit(1);
     }
-    /*if (imagen->profundidadColor!= 24) 
+    if (imagen->profundidadColor!= 24) 
     {
         printf ("La imagen debe ser de 24 bits.\n"); 
         exit(1);
-    }*/
+    }
 
     //Reservar memoria para el arreglo que tendra la imÃ¡gen en escala de grises (Arreglo de tamaÃ±o "img.ancho X img.alto")
     int i;
@@ -120,9 +123,8 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
         //CARGAR POR COLUMNA
         cargar_matriz_columna(imagen,archivo);
     }
-    
-    
-    
+
+      
     //Cerrrar el archivo
     fclose(archivo);    
 }
@@ -157,8 +159,8 @@ void crear_imagen(BMP *imagen, char ruta[]){
     fwrite(&imagen->reservado,sizeof(int),1, archivo);  
     fwrite(&imagen->offset,sizeof(int),1, archivo); 
     fwrite(&imagen->tamanoMetadatos,sizeof(int),1, archivo);    
-    fwrite(&imagen->alto,sizeof(int),1, archivo);   
     fwrite(&imagen->ancho,sizeof(int),1, archivo);  
+    fwrite(&imagen->alto,sizeof(int),1, archivo);   
     fwrite(&imagen->numeroPlanos,sizeof(short int),1, archivo); 
     fwrite(&imagen->profundidadColor,sizeof(short int),1, archivo); 
     fwrite(&imagen->tipoCompresion,sizeof(int),1, archivo);
@@ -218,6 +220,7 @@ void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
             imagen->alto = (imagen->alto/cantidad_pixeles) + 1;
         }
     }
+    imagen->tamano = imagen->offset + (imagen->ancho*imagen->alto*(sizeof( unsigned char))) ;
      
     int i;
     imagen->pixel=(Pixel**) malloc (imagen->alto * sizeof(Pixel*)); 
@@ -320,7 +323,7 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     for(i=0;i<imagen->ancho;i++){
         for(j=0;j<imagen->alto;j++){
             counter++;
-            sumB += imagen->pixel[j][i].R;
+            sumB += imagen->pixel[j][i].B;
             sumR += imagen->pixel[j][i].R;
             sumG += imagen->pixel[j][i].G;
             /*printf("%d,%d,%d\n",j,i,k);
@@ -333,8 +336,8 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                 /*printf("hola\n");
                 printf("%d\n", sumR / counter);
                 printf("hola2\n");*/
-                imagenNueva->pixel[k][i].B = sumR / counter;
-                imagenNueva->pixel[k][i].R = sumB / counter;
+                imagenNueva->pixel[k][i].B = sumB / counter;
+                imagenNueva->pixel[k][i].R = sumR / counter;
                 imagenNueva->pixel[k][i].G = sumG / counter;
                 //printf("chao\n");
                 sumB = 0;
@@ -343,10 +346,12 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                 k = 0;
                 counter = 0;
             }
-
+            //printf("counter fuera: %d\n", counter);
             if (counter == m){
-                imagenNueva->pixel[k][i].B = sumR / m;
-                imagenNueva->pixel[k][i].R = sumB / m;
+                //printf("m : %d\n",counter );
+                //printf("%d\n",sumB );
+                imagenNueva->pixel[k][i].B = sumB / m;
+                imagenNueva->pixel[k][i].R = sumR / m;
                 imagenNueva->pixel[k][i].G = sumG / m;
                 sumB = 0;
                 sumR = 0;
