@@ -11,7 +11,8 @@
 //Traduce una posición i,j a una posición del pixel dentro del archivo de la imagen.
 long int traductor(int i, int j, int ancho,int offset){
     long int pixel_offset = sizeof(char) * 3;
-    long int result = (pixel_offset*((i*ancho)+j)) + offset+ ((ancho*pixel_offset)%4);
+    //  long int result = (pixel_offset*((i*ancho)+j)) + offset+ ((ancho*pixel_offset)%4);
+    long int result = (pixel_offset*((i*ancho)+j)) + offset;
     return result;
 }
 
@@ -143,16 +144,16 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     //Cerrrar el archivo
     fclose(archivo);    
 }
+
+//ENTRADA: Archivo de la iamgen, estructura de una imagen
+//SALIDA: void
+//Funcion que agrega los pixeles de relleno para que la imagen sea de una cantidad e byts multiplo de 4.
 void rellenar_padding(FILE* archivo,BMP* imagen){
     int i;
     int mod = (imagen->ancho*(sizeof(char)))%4;
     if(mod != 0){
         for(i=0;i<mod;i++){
             fwrite(&imagen->pixel[0][0].B,sizeof(char),1, archivo);
-            
-            //fwrite('0',sizeof(char),1, archivo);
-            //fwrite('0',sizeof(char),1, archivo);
-
         }
     }
 }

@@ -45,6 +45,7 @@ int main(int argc,char** argv){
 	if (ovalue == 1){
 		clock_start(&clock_1);
 		abrir_imagen(&original,ivalue,ovalue);
+		print_imagen(&original);
 		reduce_imagen(&original,ovalue,mvalue,nvalue,&imagen_fila);
 		crear_imagen(&imagen_fila,svalue);
 		clock_print(&clock_1,1);
