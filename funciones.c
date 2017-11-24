@@ -6,12 +6,18 @@
 #include <unistd.h>
 #include "funciones.h"
 
+//ENTRADA: Los enteros i,j,ancho y offset
+//SALIDA: 
+//Traduce una posición i,j a una posición del pixel dentro del archivo de la imagen.
 long int traductor(int i, int j, int ancho,int offset){
     long int pixel_offset = sizeof(char) * 3;
     long int result = (pixel_offset*((i*ancho)+j)) + offset;
     return result;
 }
 
+//ENTRADA: int i y j, puntero a un archivo, struct BMP
+//SALIDA: void
+//La función se encarga de leer los pixeles del archivo BMP y almacenarlos en la estructura definida.
 void cargar_pixel(int i,int j,FILE* archivo,BMP* imagen){
     long int posicion = traductor(i,j,imagen->ancho,imagen->offset);
     fseek(archivo,posicion,SEEK_SET);
@@ -20,6 +26,9 @@ void cargar_pixel(int i,int j,FILE* archivo,BMP* imagen){
     fread(&imagen->pixel[i][j].R,sizeof(char),1, archivo);  //Byte Red del pixel
 }
 
+//ENTRADA: estructura BMP, puntero a un archivo
+//SALIDA: void
+//Carga la matriz de pixeles leyendo por fila desde el archivo ingresado
 void cargar_matriz_fila(BMP* imagen,FILE* archivo){
     int i=0;
     int j=0;
@@ -48,6 +57,9 @@ void cargar_matriz_fila(BMP* imagen,FILE* archivo){
     }
 }
 
+//ENTRADA: estructura BMP, puntero a un archivo
+//SALIDA: void
+//Carga la matriz de pixeles leyendo por columna desde el archivo ingresado
 void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     int i=0;
     int j=0;
@@ -64,6 +76,9 @@ void cargar_matriz_columna(BMP* imagen, FILE* archivo){
     //printf("columna\n");
 }
 
+//ENTRADA: Estructura BMP, puntero a char, número entero que representa el metodo de reducción a utilizar
+//SALIDA: void
+//La función se encarga de leer el archivo de entrada y almacenar en la estructura BMP todos los elementos de la imagen
 void abrir_imagen(BMP *imagen, char *ruta, int modo){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
     //int i,j;
@@ -128,6 +143,10 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     //Cerrrar el archivo
     fclose(archivo);    
 }
+
+//ENTRADA: Estructura BMP, arreglo de caracteres que es la ruta
+//SALIDA: void
+//La función abre un archivo de salida para poder escribir todos los elementos que contiene la imagen BMP, incluyendo los pixeles de la imagen (R,G,B)
 void crear_imagen(BMP *imagen, char ruta[]){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
 
@@ -174,6 +193,10 @@ void crear_imagen(BMP *imagen, char ruta[]){
     //Cerrrar el archivo
     fclose(archivo);
 }
+
+//ENTRADA: Estructura BMP
+//SALIDA: void
+//Se encarga de imprimir la estructura de la imagen por pantalla.
 void print_imagen(BMP *imagen){
     printf("Bm %c%c\n",imagen->bm[0],imagen->bm[1]);
     printf("Tamano %d\n",imagen->tamano);
@@ -202,6 +225,10 @@ void print_imagen(BMP *imagen){
         printf("\n");
     }*/
 }
+
+//ENTRADA: Estructura BMP
+//SALIDA: void 
+//La función destruye la estructura BMP 
 void destruir_imagen(BMP* imagen){
     int i;
     for (i=0;i<imagen->alto;i++){
@@ -211,8 +238,9 @@ void destruir_imagen(BMP* imagen){
     free(imagen->pixel);
 }
 
-
-
+//ENTRADA: Dos estructuras BMP uno de destino y otro de origen
+//SALIDA: void 
+//La función se encarga de copiar el bitmap de una imagen BMP a otra, es decir, copia todos los elementos de la estructura
 void copiar_bitmap(BMP* src, BMP* dest){
     dest->bm[0] = src->bm[0];
     dest->bm[1] = src->bm[1];
@@ -232,6 +260,9 @@ void copiar_bitmap(BMP* src, BMP* dest){
     dest->coloresImportantes = src->coloresImportantes;
 }
  
+//ENTRADA: Una estructura a BMP, entero que representa la cantidad de pixeles, y otro que representa el metodo a reducir
+//SALIDA: void
+//En esta sección se realiza el cálculo del ancho o alto de la imagen nueva, dependiendo del método de red
 void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
     if (modo == 1){
         if(imagen->ancho%cantidad_pixeles == 0){
@@ -257,6 +288,10 @@ void init_new_imagen(BMP* imagen,int cantidad_pixeles,int modo){
     }
 }
 
+//ENTRADA: Estructura BMP actual, Estructura BMP de la imagen nueva, número entero que representa la cantidad de pixeles.
+//SALIDA: void
+//La función se encarga de reducir la imagen actual por fila y almacena los pixeles en la matriz de la imagen nueva. En caso de 
+// que la fila de la imagen sea par, se recorre de izquierda a derecha, y en caso impar, al revés.
 void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     int i=0,j=0;
     int avgB, avgG, avgR; //Promedio de R,G,B
@@ -340,6 +375,9 @@ void reducir_imagen_fila(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     }
 }
 
+//ENTRADA: Estructura BMP actual, Estructura BMP de la imagen nueva, número entero que representa la cantidad de pixeles.
+//SALIDA: void
+//La función se encarga de reducir la imagen actual por columna y almacena los pixeles en la matriz de la imagen nueva.
 void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     int i = 0,j = 0;
     int m = cantidad_pixeles;
@@ -376,10 +414,13 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
             }
         }
         j++;
-    }
-   
+    } 
 }
 
+//ENTRADA: Estructura BMP imagen actual, BMP imagen nueva, entero que representa el método con el que se reduce la imagen, entero que representa la cantidad de pixeles,
+// entero que representa a las iteraciones
+//SALIDA: void
+//La función se encarga de llamar n veces (n = iteraciones) a la función de reducción dependiendo del método al que se llama
 void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,BMP* new_imagen){
     int i;
     copiar_bitmap(imagen,new_imagen);
@@ -398,8 +439,9 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,
     }
 }
 
-
-
+//ENTRADA:
+//SALIDA:
+//
 int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue){
 
     if(argc > 14){
@@ -449,6 +491,9 @@ int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue
     return 1;
 }
 
+//ENTRADA:
+//SALIDA:
+//
 int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mvalue, int ovalue){
     //Falta la verificacion de mvalue mayor que el ancho de la imagen
     if(fileExists(ivalue) == 0){
@@ -468,6 +513,9 @@ int verifyArguments(char* ivalue, char* svalue, char* gvalue, int nvalue, int mv
     return 1;
 }
 
+//ENTRADA:
+//SALIDA:
+//
 int fileExists(char* nombreArchivo){
     FILE* archivo;
     archivo = fopen(nombreArchivo, "r");
@@ -477,14 +525,25 @@ int fileExists(char* nombreArchivo){
         return 1;
 }
 
+//ENTRADA:
+//SALIDA:
+//
 void clock_start(Clock* clock){
     clock->startTime = times(&clock->startTms);
 }
+
+//ENTRADA:
+//SALIDA:
+//
 void clock_end(Clock* clock){
     clock->endTime = times(&clock->endTms);
     clock->micros = clock->endTime - clock->startTime;
     clock->ticksPerSec = sysconf(_SC_CLK_TCK);
 }
+
+//ENTRADA:
+//SALIDA:
+//
 void clock_print(Clock* clock){
     printf("\n\n");
     printf("CLK_TCK = %ld\n", clock->ticksPerSec);
@@ -493,5 +552,4 @@ void clock_print(Clock* clock){
     (clock->endTms.tms_utime - clock->startTms.tms_utime)*1000000/clock->ticksPerSec);
     printf("CPU system time (us): %lu\n",
     (clock->endTms.tms_stime - clock->startTms.tms_stime)*1000000/clock->ticksPerSec);
-
 }
