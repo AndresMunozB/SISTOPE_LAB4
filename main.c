@@ -2,6 +2,7 @@
 #include <sys/times.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #include "funciones.h"
 
 
@@ -33,26 +34,59 @@ int main(int argc,char** argv){
         return 0;
     }
 
-	
-	BMP img;	
-	BMP imgRed;			
-	char IMAGEN[45];
-	
-	strcpy(IMAGEN,ivalue);
-	printf("hola\n");
-	abrir_imagen(&img,IMAGEN,ovalue);
-	printf("chao\n");
-	print_imagen(&img);
-	reduce_imagen(&img,ovalue,mvalue,nvalue,&imgRed);
-	print_imagen(&imgRed);
-	
-	/*if(dflag == 1){
-		//printf("Tiempo de ejecucion: %d seg.\n", seconds);
-	}*/
-	
-	crear_imagen(&imgRed,IMAGEN_TRATADA);
-	clock_end(&clock);
-	clock_print(&clock);
+    Clock clock_1;
+    Clock clock_2;
+    Clock clock_3;
+
+	BMP original;
+	BMP imagen_fila;
+	BMP imagen_columna;
+	//printf("nvalue:%d\n",nvalue );
+	if (ovalue == 1){
+		clock_start(&clock_1);
+		abrir_imagen(&original,ivalue,ovalue);
+		reduce_imagen(&original,ovalue,mvalue,nvalue,&imagen_fila);
+		crear_imagen(&imagen_fila,svalue);
+		clock_end(&clock_1);
+		clock_print(&clock_1);
+		destruir_imagen(&original);
+		destruir_imagen(&imagen_fila);
+
+	}
+	else if(ovalue == 2){
+		clock_start(&clock_2);
+		abrir_imagen(&original,ivalue,ovalue);
+		reduce_imagen(&original,ovalue,mvalue,nvalue,&imagen_columna);
+		crear_imagen(&imagen_columna,gvalue);
+		clock_end(&clock_2);
+		clock_print(&clock_2);
+		destruir_imagen(&original);
+		destruir_imagen(&imagen_columna);
+	}
+	else if(ovalue == 3){
+		clock_start(&clock_3);
+
+		clock_start(&clock_1);
+		abrir_imagen(&original,ivalue,1);
+		reduce_imagen(&original,1,mvalue,nvalue,&imagen_fila);
+		crear_imagen(&imagen_fila,svalue);
+		clock_end(&clock_1);
+		clock_print(&clock_1);
+		destruir_imagen(&original);
+		destruir_imagen(&imagen_fila);
+
+		clock_start(&clock_2);
+		abrir_imagen(&original,ivalue,2);
+		reduce_imagen(&original,2,mvalue,nvalue,&imagen_columna);
+		crear_imagen(&imagen_columna,gvalue);
+		clock_end(&clock_2);
+		clock_print(&clock_2);
+		destruir_imagen(&original);
+		destruir_imagen(&imagen_columna);
+		clock_end(&clock_3);
+		clock_print(&clock_3);
+	}
+
 
 
 	return 0;

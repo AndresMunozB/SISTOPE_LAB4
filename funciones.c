@@ -128,16 +128,6 @@ void abrir_imagen(BMP *imagen, char *ruta, int modo){
     //Cerrrar el archivo
     fclose(archivo);    
 }
-
-void destruir_imagen(BMP* imagen){
-    int i;
-    for (i=0;i<imagen->alto;i++){
-        free(imagen->pixel[i]);
-    }
-    free(imagen->pixel);
-    free(imagen);
-}
-
 void crear_imagen(BMP *imagen, char ruta[]){
     FILE *archivo;  //Puntero FILE para el archivo de imÃ¡gen a abrir
 
@@ -148,7 +138,7 @@ void crear_imagen(BMP *imagen, char ruta[]){
     if(!archivo)
     { 
         //Si la imÃ¡gen no se encuentra en la ruta dada
-        printf( "La imÃ¡gen %s no se pudo crear\n",ruta);
+        printf( "La imagen %s no se pudo crear\n",ruta);
         exit(1);
     }
     
@@ -184,6 +174,44 @@ void crear_imagen(BMP *imagen, char ruta[]){
     //Cerrrar el archivo
     fclose(archivo);
 }
+void print_imagen(BMP *imagen){
+    printf("Bm %c%c\n",imagen->bm[0],imagen->bm[1]);
+    printf("Tamano %d\n",imagen->tamano);
+    printf("reservado %d\n",imagen->reservado);
+    printf("offset %d\n",imagen->offset);
+    printf("Tamano Metadatos %d\n",imagen->tamanoMetadatos);
+    printf("Alto %d\n",imagen->alto);
+    printf("Ancho %d\n",imagen->ancho);
+    printf("Numero Planos %d\n",imagen->numeroPlanos);
+    printf("Profundidad Color %d\n",imagen->profundidadColor);
+    printf("Tipo compresion %d\n",imagen->tipoCompresion);
+    printf("Tamano Estructua %d\n",imagen->tamanoEstructura);
+    printf("pxmh %d\n",imagen->pxmh);
+    printf("pxmv %d\n",imagen->pxmv);
+    printf("Colores Usados %d\n",imagen->coloresUsados);
+    printf("Colores Importantes %d\n",imagen->coloresImportantes);
+
+   /* printf("PIXEL:\n");
+    for(int i = 0; i < imagen->alto; i++){
+        printf("%d - ", i+1);
+        for(int j = 0; j < imagen->ancho; j++){
+            printf("(%d,",imagen->pixel[i][j].R);
+            printf("%d,",imagen->pixel[i][j].G);
+            printf("%d) ",imagen->pixel[i][j].B);
+        }
+        printf("\n");
+    }*/
+}
+void destruir_imagen(BMP* imagen){
+    int i;
+    for (i=0;i<imagen->alto;i++){
+        //printf("%d\n", i);
+        free(imagen->pixel[i]);
+    }
+    free(imagen->pixel);
+}
+
+
 
 void copiar_bitmap(BMP* src, BMP* dest){
     dest->bm[0] = src->bm[0];
@@ -316,7 +344,7 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
     int i = 0,j = 0;
     int m = cantidad_pixeles;
     int sumB = 0, sumR = 0, sumG = 0;
-    print_imagen(imagenNueva);
+    //print_imagen(imagenNueva);
     int k = 0;
     int counter = 0;
 
@@ -326,30 +354,17 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
             sumB += imagen->pixel[j][i].B;
             sumR += imagen->pixel[j][i].R;
             sumG += imagen->pixel[j][i].G;
-            /*printf("%d,%d,%d\n",j,i,k);
-            printf("counter: %d\n",counter );
-            printf("%d\n",sumG );
-            printf("%d\n",sumR );
-            printf("%d\n",sumB );*/
-
             if (j==imagen->alto-1){
-                /*printf("hola\n");
-                printf("%d\n", sumR / counter);
-                printf("hola2\n");*/
                 imagenNueva->pixel[k][i].B = sumB / counter;
                 imagenNueva->pixel[k][i].R = sumR / counter;
                 imagenNueva->pixel[k][i].G = sumG / counter;
-                //printf("chao\n");
                 sumB = 0;
                 sumR = 0;
                 sumG = 0;
                 k = 0;
                 counter = 0;
             }
-            //printf("counter fuera: %d\n", counter);
             if (counter == m){
-                //printf("m : %d\n",counter );
-                //printf("%d\n",sumB );
                 imagenNueva->pixel[k][i].B = sumB / m;
                 imagenNueva->pixel[k][i].R = sumR / m;
                 imagenNueva->pixel[k][i].G = sumG / m;
@@ -359,7 +374,6 @@ void reducir_imagen_columna(BMP* imagen,int cantidad_pixeles, BMP* imagenNueva){
                 counter = 0;
                 k++;
             }
-
         }
         j++;
     }
@@ -371,52 +385,20 @@ void reduce_imagen(BMP* imagen, int modo, int cantidad_pixeles, int iteraciones,
     copiar_bitmap(imagen,new_imagen);
     init_new_imagen(new_imagen,cantidad_pixeles,modo);
     if(modo == 1){
-        printf("%d\n", new_imagen->ancho);
-        printf("%d\n", new_imagen->alto);
         for (i = 0; i < iteraciones; i++)
         {
             reducir_imagen_fila(imagen,cantidad_pixeles,new_imagen);
         }
     }
     else if(modo == 2){
-        printf("%d\n", new_imagen->ancho);
-        printf("%d\n", new_imagen->alto);
         for (i = 0; i < iteraciones; i++)
         {
             reducir_imagen_columna(imagen,cantidad_pixeles,new_imagen);
         }
     }
-
 }
 
-void print_imagen(BMP *imagen){
-    printf("Bm %c%c\n",imagen->bm[0],imagen->bm[1]);
-    printf("Tamano %d\n",imagen->tamano);
-    printf("reservado %d\n",imagen->reservado);
-    printf("offset %d\n",imagen->offset);
-    printf("Tamano Metadatos %d\n",imagen->tamanoMetadatos);
-    printf("Alto %d\n",imagen->alto);
-    printf("Ancho %d\n",imagen->ancho);
-    printf("Numero Planos %d\n",imagen->numeroPlanos);
-    printf("Profundidad Color %d\n",imagen->profundidadColor);
-    printf("Tipo compresion %d\n",imagen->tipoCompresion);
-    printf("Tamano Estructua %d\n",imagen->tamanoEstructura);
-    printf("pxmh %d\n",imagen->pxmh);
-    printf("pxmv %d\n",imagen->pxmv);
-    printf("Colores Usados %d\n",imagen->coloresUsados);
-    printf("Colores Importantes %d\n",imagen->coloresImportantes);
 
-   /* printf("PIXEL:\n");
-    for(int i = 0; i < imagen->alto; i++){
-        printf("%d - ", i+1);
-        for(int j = 0; j < imagen->ancho; j++){
-            printf("(%d,",imagen->pixel[i][j].R);
-            printf("%d,",imagen->pixel[i][j].G);
-            printf("%d) ",imagen->pixel[i][j].B);
-        }
-        printf("\n");
-    }*/
-}
 
 int opt_get(int argc, char** argv, char ivalue[300],char svalue[300],char gvalue[300],int* nvalue, int* mvalue, int* ovalue,int* dvalue){
 
@@ -504,10 +486,12 @@ void clock_end(Clock* clock){
     clock->ticksPerSec = sysconf(_SC_CLK_TCK);
 }
 void clock_print(Clock* clock){
+    printf("\n\n");
     printf("CLK_TCK = %ld\n", clock->ticksPerSec);
     printf("Elapsed time (us): %lu\n", clock->micros*1000000/clock->ticksPerSec);
     printf("CPU user time (us): %lu\n",
     (clock->endTms.tms_utime - clock->startTms.tms_utime)*1000000/clock->ticksPerSec);
     printf("CPU system time (us): %lu\n",
     (clock->endTms.tms_stime - clock->startTms.tms_stime)*1000000/clock->ticksPerSec);
+
 }
